@@ -1,0 +1,85 @@
+// 2. Database Schema with Prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  predictions     Prediction[]
+  subscriptions   Subscription[]
+  dailyQueries    DailyQuery[]
+  
+  @@map("users")
+}
+
+model Prediction {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  sport       String
+  homeTeam    String
+  awayTeam    String
+  prediction  Json
+  confidence  Float
+  result      String?
+  isCorrect   Boolean?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("predictions")
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  plan        Plan
+  status      SubscriptionStatus
+  stripeId    String?
+  
+  startDate   DateTime
+  endDate     DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("subscriptions")
+}
+
+model DailyQuery {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  date      DateTime @default(now())
+  count     Int      @default(0)
+  
+  @@unique([userId, date])
+  @@map("daily_queries")
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+}

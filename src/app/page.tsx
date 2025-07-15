@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import AIPrediction from "@/components/AIPrediction";
+import AIPrediction from "@/components/AIPredictions";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonals from "@/components/Testimonals";
 import Pricing from "@/components/Pricing";
@@ -19,7 +19,7 @@ export default function Home() {
       <HowItWorks />
       <Testimonals />
       <Pricing />
-      console.log("CTASection =", CTASection);
+
 
       <CTASection />
 

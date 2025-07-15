@@ -13,7 +13,7 @@ interface StepCardProps {
 
 const StepCard: React.FC<StepCardProps> = ({ icon, title, description, index, isVisible }) => {
   return (
-    <div
+    <div id='hiw'
       className={`relative group transform transition-all duration-700 ease-out ${
         isVisible 
           ? 'translate-y-0 opacity-100' 

@@ -7,43 +7,51 @@ import { usePathname } from 'next/navigation';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
   const pathname = usePathname();
 
-  // Handle scroll effect
+  let lastScrollY = 0;
+
+  // Scroll behavior for hiding/showing navbar
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      setScrolled(isScrolled);
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 10);
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowNavbar(false); // scroll down → hide navbar
+      } else {
+        setShowNavbar(true); // scroll up → show navbar
+      }
+
+      lastScrollY = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Predictions', href: '/predictions' },
-    { name: 'How It Works', href: '/how-it-works' },
-    { name: 'Pricing', href: '/pricing' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Predictions', href: '#pred' },
+    { name: 'How It Works', href: '#hiw' },
+    { name: 'Pricing', href: '#pricing' },
+    { name: 'Contact', href: '#foot' },
   ];
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 transform ${
         scrolled
           ? 'bg-white/80 backdrop-blur-lg shadow-lg border-b border-gray-100'
           : 'bg-white/95 backdrop-blur-sm'
-      }`}
+      } ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
@@ -117,9 +125,7 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <div
         className={`lg:hidden transition-all duration-300 ease-in-out ${
-          isOpen
-            ? 'max-h-96 opacity-100'
-            : 'max-h-0 opacity-0'
+          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         } overflow-hidden`}
       >
         <div className="px-4 pt-2 pb-6 space-y-1 bg-white/95 backdrop-blur-sm border-t border-gray-100">

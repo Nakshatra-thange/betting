@@ -19,9 +19,11 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white overflow-hidden">
+    <footer 
+    className="relative bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white overflow-hidden">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 opacity-5">
+      <div id='foot'
+      className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse animation-delay-2000"></div>
       </div>
