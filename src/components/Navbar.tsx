@@ -2,26 +2,28 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import { LogOut } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const pathname = usePathname();
-
+  const router = useRouter();
   let lastScrollY = 0;
 
-  // Scroll behavior for hiding/showing navbar
+  // Scroll behavior
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 10);
 
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setShowNavbar(false); // scroll down → hide navbar
+        setShowNavbar(false);
       } else {
-        setShowNavbar(true); // scroll up → show navbar
+        setShowNavbar(true);
       }
 
       lastScrollY = currentScrollY;
@@ -41,9 +43,21 @@ const Navbar = () => {
     { name: 'How It Works', href: '#hiw' },
     { name: 'Pricing', href: '#pricing' },
     { name: 'Contact', href: '#foot' },
+    { name: 'Signup', href: '/signup' }
   ];
 
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleLogout = async () => {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+
+    if (res.ok) {
+      toast.success('Logged out!');
+      router.push('/login');
+    } else {
+      toast.error('Logout failed');
+    }
+  };
 
   return (
     <nav
@@ -68,7 +82,7 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Nav */}
           <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link) => (
               <Link
@@ -83,9 +97,18 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+
+            {/* ✅ Logout button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-red-500 hover:text-red-700 text-sm font-semibold ml-4"
+            >
+              <LogOut size={16} />
+              Logout
+            </button>
           </div>
 
-          {/* Join Now Button & Mobile Menu Button */}
+          {/* Join Now + Mobile Menu */}
           <div className="flex items-center space-x-4">
             <Link
               href="/join"
@@ -94,7 +117,7 @@ const Navbar = () => {
               Join Now
             </Link>
 
-            {/* Mobile menu button */}
+            {/* Hamburger */}
             <button
               onClick={toggleMenu}
               className="lg:hidden relative w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors duration-200"
@@ -142,14 +165,15 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <div className="pt-4">
-            <Link
-              href="/join"
-              className="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-base font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
-            >
-              Join Now
-            </Link>
-          </div>
+
+          {/* ✅ Mobile Logout */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-red-500 hover:text-red-700 px-4 py-3 font-semibold"
+          >
+            <LogOut size={16} />
+            Logout
+          </button>
         </div>
       </div>
     </nav>

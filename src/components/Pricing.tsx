@@ -1,6 +1,17 @@
+'use client'
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 const Pricing: React.FC = () => {
+  const router = useRouter();
+
+  const handleFreeStart = () => {
+    router.push('/joinapp'); // or '/signup'
+  };
+
+  const handlePremiumTrial = () => {
+    router.push('/dashboard?trial=start'); // or your upgrade route
+  };
   return (
     <div id = "pricing"
     className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-16 px-4">
@@ -59,14 +70,17 @@ const Pricing: React.FC = () => {
                 </div>
               </div>
 
-              <button className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/50 backdrop-blur-sm">
+              <button  onClick={handleFreeStart}
+              className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 border border-white/30 hover:border-white/50 backdrop-blur-sm">
                 Get Started Free
               </button>
             </div>
           </div>
 
           {/* Premium Plan */}
-          <div className="relative group">
+          <div onClick={handlePremiumTrial}
+
+          className="relative group">
             {/* Popular Badge */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
               <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">

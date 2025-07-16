@@ -1,13 +1,13 @@
-// 1. First, let's create the middleware.ts file in your root directory
-// middleware.ts
+// /src/middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import jwt from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('auth-token');
+  const token = request.cookies.get('auth-token')?.value;
   const { pathname } = request.nextUrl;
 
-  // Rate limiting for API routes
+  // Rate limiting for all API routes
   if (pathname.startsWith('/api/')) {
     const response = NextResponse.next();
     response.headers.set('X-RateLimit-Limit', '100');
@@ -15,11 +15,32 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Protected routes for premium features
-  if (pathname.startsWith('/api/predictions/premium') || 
-      pathname.startsWith('/api/predictions/unlimited')) {
+  // Protect premium prediction APIs
+  if (
+    pathname.startsWith('/api/predictions/premium') ||
+    pathname.startsWith('/api/predictions/unlimited')
+  ) {
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    try {
+      jwt.verify(token, process.env.NEXTAUTH_SECRET!);
+    } catch {
+      return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
+    }
+  }
+
+  // Protect dashboard pages from unauthenticated access
+  if (pathname.startsWith('/dashboard')) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    try {
+      jwt.verify(token, process.env.NEXTAUTH_SECRET!);
+    } catch {
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
@@ -27,8 +48,10 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/api/:path*', '/dashboard/:path*']
+  matcher: [
+    '/api/:path*',
+    '/dashboard/:path*'
+  ]
 };
-
 
 

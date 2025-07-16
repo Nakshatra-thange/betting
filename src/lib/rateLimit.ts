@@ -3,7 +3,10 @@ import { NextRequest } from 'next/server';
 const rateLimit = new Map();
 
 export function checkRateLimit(request: NextRequest, limit: number = 10) {
-  const ip = request.ip || request.headers.get('X-Forwarded-For') || 'unknown';
+  const forwarded = request.headers.get('x-forwarded-for');
+const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
+
+
   const now = Date.now();
   const windowMs = 60 * 1000; // 1 minute window
   

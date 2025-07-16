@@ -6,9 +6,9 @@ const Footer: React.FC = () => {
 
   const navigationLinks = [
     { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Terms', href: '/terms' }
+
+    { name: 'Contact', href: '/contact' }
+    
   ];
 
   const socialLinks = [

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient,Plan } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
       data: {
         email,
         name,
-        plan: 'FREE'
+        password: hashedPassword,
+        plan: Plan.FREE
       }
     });
 
@@ -56,7 +57,8 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
+   } catch (error) {
+  console.error('[REGISTER_ERROR]', error);
+  return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+}
 }
